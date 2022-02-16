@@ -1,0 +1,12 @@
+{
+  "name": "gk-theme-generator",
+  "version": "1.0.0",
+  "description": "gk-theme-generator",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron index.js"
+  },
+  "dependencies": {
+    "menubar": "^9.1.1"
+  }
+}

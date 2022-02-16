@@ -1,0 +1,100 @@
+<style>
+    body {
+        background-color: #f2f2f2;
+        overflow: hidden;
+    }
+    body, body * {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+    input[type=text], input[type=number] {
+        background-color: white;
+        padding: 0.5em;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    input[type="text"] {
+        font-size: 1.2em;
+        width: 100%;
+    }
+    input[type="number"] {
+        width: 100px
+    }
+    .flex {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    .flex-1 {
+        flex: 1;
+    }
+    button {
+        background-color: rgba(0,0,0,0.6);
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 0.25em 0.5em;
+        font-size: 1.5em;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: rgba(0,0,0,0.8);
+    }
+    #colors > div {
+        padding: 0.5em;
+        color: white;
+        border-radius: 5px;
+        margin-top: 0.5em;
+    }
+</style>
+
+<div class="flex">
+    <input id="input" oninput="check()" type="text" placeholder="#1F677E" minlength="7" maxlength="7">
+    <button onclick="add()">+</button>
+</div>
+
+<div class="flex">
+    <div class="flex-1">
+        <input onchange="generate()" id="rotate" type="checkbox" checked> Rotate
+    </div>
+    <div>
+        <input id="interval" oninput="generate()" type="number" value="5000">
+    </div>
+</div>
+
+
+
+<div id="colors"></div>
+
+<script>
+    const { ipcRenderer } = require('electron');
+    let colors = [];
+
+    const check = () => {
+        const input = document.getElementById('input').value;
+        if (input[0] !== '#' || input.length !== 7) {
+            document.getElementById('input').style.backgroundColor = 'rgba(255,0,0,0.2)';
+            return;
+        }
+        document.getElementById('input').style.backgroundColor = 'white';
+    }
+
+    const add = () => {
+        const input = document.getElementById('input').value;
+
+        let div = document.createElement("div");
+        div.innerHTML = input;
+        div.style.backgroundColor = input;
+        document.getElementById('colors').appendChild(div);
+
+        colors.push(input);
+        generate();
+    }
+
+    const generate = async () => {
+        const inter = document.getElementById('interval').value;
+        const rotate = document.getElementById('rotate').checked;
+        if (colors.length === 0) return;
+        const result = await ipcRenderer.invoke('generate', {colors, inter, rotate});
+    }
+</script>
